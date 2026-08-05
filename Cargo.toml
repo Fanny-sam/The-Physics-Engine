@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 spade = "2.15.1"
+spirv-builder = "0.9"

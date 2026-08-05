@@ -101,24 +101,9 @@ impl std::ops::Mul<Vector2> for Matrix2 {
     }
 }
 impl Vector2 {
-    // Consumes self and returns Point2 (zero-cost, just a repr-transparent cast)
-    #[inline(always)]
-    pub fn into_point2(self) -> Point2<f32> {
-        Point2::new(self.x, self.y)
-    }
-
     // Borrows self and returns Point2 (cheap, copies two floats)
     #[inline(always)]
-    pub fn as_point2(&self) -> Point2<f32> {
+    pub fn into_point2(&self) -> Point2<f32> {
         Point2::new(self.x, self.y)
-    }
-    
-    
-    // Optional: From trait for generic conversions
-}
-// Also implement From for convenience
-impl Vector2 {
-    pub fn to_point(self) -> Point2<f32> {
-        Point2::new(self.x, self.y) // The logic lives here, ONCE
     }
 }
