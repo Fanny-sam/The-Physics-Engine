@@ -1,7 +1,7 @@
 mod object_frontend;
 mod constants_and_such;
 mod methods;
-use crate::constants_and_such::*;
+use crate::constants::*;
 ffi! {
     fn phisiks_correct(obj: *mut Object2l, correction_data: CorrectionData) {
         unsafe {(*obj).correction(correction_data);} // call the safe rust method

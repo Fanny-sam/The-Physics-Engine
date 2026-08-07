@@ -1,4 +1,4 @@
-use crate::constants_and_such::*;
+use crate::constants::*;
 use crate::methods::*;
 
 
@@ -7,7 +7,7 @@ impl Object2l {
         self.integrate_linear(dt); //first function
         self.integrate_angular(dt); //second function
         self.calculate_collision_mesh(); //third function
-        self.runtask(worker, task, number)
+        self.run()
         
         
         

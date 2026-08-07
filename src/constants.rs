@@ -60,6 +60,7 @@ pub struct Vertex {
     pub pos: Point2<f32>,
     pub id: u32,
 }
+#[repr(C)]
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix2 {
     pub col1: Vector2,
