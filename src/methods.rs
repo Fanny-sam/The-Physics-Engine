@@ -100,10 +100,18 @@ impl std::ops::Mul<Vector2> for Matrix2 {
         }
     }
 }
+impl Matrix2 {
+    fn start(&self) -> Vector2 {
+        self.col1
+    }
+    fn end(&self) -> Vector2 {
+        self.col2
+    }
+}
 impl Vector2 {
     // Borrows self and returns Point2 (cheap, copies two floats)
     #[inline(always)]
-    pub fn into_point2(&self) -> Point2<f32> {
+    pub fn to_point2(&self) -> Point2<f32> {
         Point2::new(self.x, self.y)
     }
 }
