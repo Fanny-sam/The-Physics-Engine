@@ -5,15 +5,3 @@ edition = "2024"
 
 [dependencies]
 spade = "2.15.1"
-
-[build-dependencies]
-spirv-builder = "0.9"
-
-# In your Cargo.toml
-[profile.dev.build-override]
-opt-level = 3          # Compiles build scripts & proc-macros with full optimizations
-codegen-units = 1      # Better optimizations, at a slight cost to parallel compilation
-
-[profile.release.build-override]
-opt-level = 3
-codegen-units = 1

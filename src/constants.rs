@@ -1,4 +1,3 @@
-use std::sync::Mutex;
 use spade::Point2;
 
 
@@ -66,6 +65,12 @@ pub struct Matrix2 {
     pub col1: Vector2,
     pub col2: Vector2,
 }
+pub struct MatrixMatrix2 {
+    pub m1: Matrix2
+    pub m2: Matrix2
+    pub m3: Matrix2
+    pub m4: Matrix2
+}
 pub struct DVect {
     pub radians: f32,
     pub magnitude: f32,
@@ -91,11 +96,15 @@ pub struct Object2l {
 }
 pub struct Island3l {
     pub objids: Vec<u32>,
+    pub islid: u32
 }
 pub struct Archi4l {
-    pub objids: Vec<u32>,
+    pub islids: Vec<u32>,
 }
 #[repr(C)]
 pub struct PhisiksObject {
     pub id: u32,
+}
+pub struct Batchtype1 {
+    pub data: [u32; 4092]
 }

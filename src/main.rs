@@ -1,5 +1,5 @@
 mod object_frontend;
-mod constants_and_such;
+mod constants;
 mod methods;
 use crate::constants::*;
 ffi! {

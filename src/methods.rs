@@ -100,12 +100,27 @@ impl std::ops::Mul<Vector2> for Matrix2 {
         }
     }
 }
+
 impl Matrix2 {
-    fn start(&self) -> Vector2 {
+    pub fn start(&self) -> Vector2 {
         self.col1
     }
-    fn end(&self) -> Vector2 {
+    pub fn end(&self) -> Vector2 {
         self.col2
+    }
+}
+impl MatrixMatrix2 {
+    pub fn c1r1(&self) -> Matrix2 {
+        self.m1
+    }
+    pub fn c1r2(&self) -> Matrix2 {
+        self.m2
+    }
+    pub fn c2r1(&self) -> Matrix2 {
+        self.m3
+    }
+    pub fn c2r2(&self) -> Matrix2 {
+        self.m4
     }
 }
 impl Vector2 {
@@ -113,5 +128,15 @@ impl Vector2 {
     #[inline(always)]
     pub fn to_point2(&self) -> Point2<f32> {
         Point2::new(self.x, self.y)
+    }
+}
+impl Archi4l {
+    pub fn add(&mut self, object: Island3l) {
+        self.islids.push(Island3l.islid)
+    }
+}
+impl Island3l {
+    pub fn add(&mut self, object: Object2l) {
+        self.objids.push(Object2l.id)
     }
 }
