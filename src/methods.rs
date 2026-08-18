@@ -1,5 +1,25 @@
 use spade::Point2;
 use crate::constants::*;
+use rayon::prelude::*;
+fn has_hardware_vulkan_compute() -> bool {
+    let entry = ash::Entry::linked()?;
+    let instance = create_instance(&entry)?;
+    let devices = unsafe { instance.enumerate_physical_devices()? };
+    
+    for device in devices {
+        let props = unsafe { instance.get_physical_device_properties(device) };
+        // Filter out CPU drivers explicitly
+        if props.device_type == ash::vk::PhysicalDeviceType::CPU {
+            continue;
+        }
+        // Check for compute queue family
+        let queue_families = unsafe { instance.get_physical_device_queue_family_properties(device) };
+        if queue_families.iter().any(|q| q.queue_flags.contains(vk::QueueFlags::COMPUTE)) {
+            return true; // Found real GPU with compute
+        }
+    }
+    false
+}
 impl Object2l {
     #[inline(always)]
     pub fn integrate_linear(&mut self, dt: f32) {
@@ -139,4 +159,8 @@ impl Island3l {
     pub fn add(&mut self, object: Object2l) {
         self.objids.push(Object2l.id)
     }
+}
+fn Spiraler(mesh: Mesh2l) -> 
+fn Triangulator(object: Object2l) -> TriangleMesh {
+    
 }

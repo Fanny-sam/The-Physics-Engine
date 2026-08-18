@@ -65,6 +65,7 @@ pub struct Matrix2 {
     pub col1: Vector2,
     pub col2: Vector2,
 }
+#[repr(C)]
 pub struct MatrixMatrix2 {
     pub m1: Matrix2
     pub m2: Matrix2
@@ -75,6 +76,7 @@ pub struct DVect {
     pub radians: f32,
     pub magnitude: f32,
 } //just in case i need it
+#[repr(C)]
 pub struct Object1l {
     pub pos: Vector2,
     pub vel: Vector2,
@@ -87,23 +89,39 @@ pub struct Object1l {
 pub struct Object2l {
     pub id: u32,
     pub obj: Object1l,
-    pub collision: Vec<Vector2>,
-    pub nonwarp_collision: Vec<Vector2>,
+    pub collision: Mesh,
+    pub rot_collision: Mesh,
     pub collision_order: Vec<u32>,
     pub layer: u32,
     pub coobjs: Vec<u32>,
     pub prevapos: f32,
+}
+pub struct Mesh {
+    pub vectors: Vec<Vector2>
+}
+pub struct DirectedMesh
+pub struct Line <'a> {
+    pub p1: &'a point2
+    pub p2: &'a Point2
 }
 pub struct Island3l {
     pub objids: Vec<u32>,
     pub islid: u32
 }
 pub struct Archi4l {
-    pub islids: Vec<u32>,
+    pub islids: &mut <Island3l>,
 }
 #[repr(C)]
 pub struct PhisiksObject {
-    pub id: u32,
+    pub miku: *mut Objectl2,
+}
+pub struct Triangle {
+    pub p1: Point2
+    pub p2: Point2
+    pub p3: Point2
+}
+pub struct TriangleMesh {
+    pub triangles: Vec<Triangle>
 }
 pub struct Batchtype1 {
     pub data: [u32; 4092]
