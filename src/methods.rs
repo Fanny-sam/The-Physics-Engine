@@ -1,4 +1,4 @@
-use spade::Point2;
+⅞8use spade::Point2;
 use crate::constants::*;
 use rayon::prelude::*;
 fn has_hardware_vulkan_compute() -> bool {
@@ -20,7 +20,6 @@ fn has_hardware_vulkan_compute() -> bool {
     }
     false
 }
-impl Object2l {
     #[inline(always)]
     pub fn integrate_linear(&mut self, dt: f32) {
         self.obj.vel.x += (self.obj.grav.x + self.obj.acc.x) * dt;
@@ -105,15 +104,73 @@ impl Object2l {
         }
     }
 }
+/*---------------------------------------
+       First Layer Functions
+---------------------------------------*/
 
+//-----------lift one--------------------------
+pub fn sort_by_keys<T>(objects: Vec<T>, keys: Vec<f32>) -> Vec<T> {
+    let mut pairs: Vec<(f32, T)> = keys.into_iter().zip(objects).collect();
+    pairs.sort_by(|a, b| a.0.total_cmp(&b.0));
+    pairs.into_iter().map(|(_, obj)| obj).collect()
+}
+pub fn get_angle(vector: Vector2) -> f32 {
+    vector.x.atan2(vector.y).to_degrees()
+}
+pub fn sort_mesh(mesh: Mesh, centroid: Vector2) {
+    let mut keys = Vec![]
+    for vector in mesh.vectors.iter() {
+        keys.push(get_angle(vector - centroid));
+    }
+    let mut output = Mesh::default();
+    output.vectors = sort_by_keys(mesh.vectors, keys);
+}
+//-----------lift one--------------------------
 #[inline(always)]
 pub fn dot(a: Vector2, b: Vector2) -> f32 {
     a.x*b.x + a.y*b.y
 }
+pub fn squareddistance(vector: Vector2) -> f32 {
+    vector.x*vector.x+vector.y*vector.y
+}
+pub fn pythag
+impl Vector2 {
+    pub fn 
+}
+impl std::ops::Add<Vector2> for Vector2 {
+    type Output = Vector2
+    
+    pub fn add(self, rhs: Vector2) -> Vector2 {
+        Vector2 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+impl std::ops::Sub<Vector2> for Vector2 {
+    type Output = Vector2
+    
+    pub fn sub(self, rhs: Vector2) -> Vector2 {
+        Vector2 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+impl std::ops::Div<f32> for Vector2 {
+    type Output = Vector2
+    
+    pub fn div(self, rhs: f32) -> Vector2 {
+        Vector2 {
+            x: self.x/rhs,
+            y: self.y/rhs,
+        }
+    }
+}
 impl std::ops::Mul<Vector2> for Matrix2 {
     type Output = Vector2;
 
-    fn mul(self, v: Vector2) -> Vector2 {
+    pub fn mul(self, v: Vector2) -> Vector2 {
         Vector2 {
             x: self.col1.x * v.x + self.col2.x * v.y,
             y: self.col1.y * v.x + self.col2.y * v.y,
@@ -160,7 +217,113 @@ impl Island3l {
         self.objids.push(Object2l.id)
     }
 }
-fn Spiraler(mesh: Mesh2l) -> 
+/*---------------------------------------
+       Second Layer Functions
+---------------------------------------*/
+pub trait Traitcode000 {
+    fn sum_optim(&self) -> Vector2;
+}
+impl Traitcode000 for [Vector2] {
+    fn sum_optim(&self) -> Vector2 {
+        if self.len() <= 4 {
+            match self.len() {
+                0 => Vector2 {x: 0.0, y: 0.0},
+                1 => self[0],
+                2 => self[0]+self[1],
+                3 => (self[0]+self[1])+self[2],
+                4 => (self[0]+self[1])+(self[2]+self[3]),
+                _ => unreachable!(),
+            }
+        } else {
+            let (half1, half2) = self.split_at(self.len()/2);
+            let (quar1, quar2) = half1.split_at(half1.len()/2);
+            let (quar3, quar4) = half2.split_at(half2.len()/2);
+            let part1 = quar1.sum_optim();
+            let part2 = quar2.sum_optim();
+            let part3 = quar3.sum_optim();
+            let part4 = quar4.sum_optim();
+            let fin1 = part1 + part2;
+            let fin2 = part3 + part4;
+            fin1 + fin2
+        }
+    }
+}
+
+impl Traitcode000 for Mesh {
+    fn sum_optim(&self) -> Vector2 {
+        if self.vectors.len() <= 4 {
+            match self.vectors.len() {
+                0 => Vector2 {x: 0.0, y: 0.0},
+                1 => self[0],
+                2 => self[0]+self[1],
+                3 => self[0]+self[1]+self[2],
+                4 => (self[0]+self[1])+(self[2]+self[3]),
+                _ => unreachable!(),
+            }
+        } else {
+            let (half1, half2) = self.vectors.split_at(self.vectors.len()/2);
+            let (quar1, quar2) = half1.split_at(half1.len()/2);
+            let (quar3, quar4) = half2.split_at(half2.len()/2);
+            let part1 = quar1.sum_optim();
+            let part2 = quar2.sum_optim();
+            let part3 = quar3.sum_optim();
+            let part4 = quar4.sum_optim();
+            let fin1 = part1 + part2;
+            let fin2 = part3 + part4;
+            fin1 + fin2
+        }
+    }
+    pub fn sum(&self) -> Vector2 {
+        let output: Vector2 = 0.0;
+        for value in self.vectors {
+            output = output + value;
+        }
+        output
+    }
+}
+impl Mesh {
+    pub fn farp(&self, cen: Vector2) -> Vector2 {
+        let mut output = Vector2::default();
+        let mut distprev: f32 = -1.00;
+        let mut dist: f32 = 0.0;
+        for vertex in &self.vertex {
+            dist = squareddistance(vertex-cen);
+            if dist > distprev {
+                distprev = dist;
+                output = vertex;
+            }
+        }
+        output
+    }
+    
+}
+fn Spiraler(mesh: &Mesh) -> Mesh {
+    // how do i spiral a graph?
+    // hmm, maybe calculate the centroid first
+    let centroid = mesh.sum_optim()/mesh.len();
+    //now what algorythm do i add1
+    //oh, one more thing, clone Mesh. and make a surrogate mesh
+    let mut finishermesh = Mesh::default();
+    //1: calculate the farthest point from centroid and sort the mesh so that it is clockwise sorted
+    let mut nowpoint = mesh.farp(centroid);
+    mesh_sorted = sort(mesh, centroid)
+    finishermesh.vectors.push(nowpoint);
+    //2: calculate the angles from every point to this point, then choose the one closest to the top pointing vector while in the front 180°
+    nowpoint = mclone.ClosestP(centroid, nowpoint)
+    //3: push it, and pop mclone
+    finishermesh.vectors.push(nowpoint);
+    mclone.vectors.pop();
+    //3: do this over and over in a while loop
+    while mclone.vectors.len() != 0 {
+        nowpoint = mclone.last180(centroid, nowpoint).chooseclosestpoint(centroid, nowpoint);
+        finishermesh.vectors.push(nowpoint);
+        mclone.vectors.pop();
+    };
+    //4: output the result
+    //output the output that outputs a output that outputs 2 outputs
+    
+    finishermesh
+}
 fn Triangulator(object: Object2l) -> TriangleMesh {
     
 }

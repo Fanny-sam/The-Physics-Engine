@@ -1,5 +1,3 @@
-use spade::Point2;
-
 
 #[repr(u32)]
 pub enum CorrectionKey {
@@ -13,6 +11,7 @@ pub enum CorrectionKey {
     Layer = 7,
     Prevapos = 8,
 }
+
 #[macro_export]
 macro_rules! ffi {
     //for functions that return a value
@@ -25,7 +24,7 @@ macro_rules! ffi {
         #[unsafe(no_mangle)]
         pub extern "C" fn $name($($arg: $ty),*) $body
     };
-    //for functions with no arguments
+    //for functions with no argument
     (fn $name:ident() -> $ret:ty $body:block) => {
         #[unsafe(no_mangle)]
         pub extern "C" fn $name() -> $ret $body
@@ -50,6 +49,7 @@ pub struct CorrectionData {
 }
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]
+#[derive(Default)]
 pub struct Vector2 {
     pub x: f32,
     pub y: f32,
@@ -61,6 +61,7 @@ pub struct Vertex {
 }
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]
+#[derive(Default)]
 pub struct Matrix2 {
     pub col1: Vector2,
     pub col2: Vector2,
@@ -96,13 +97,19 @@ pub struct Object2l {
     pub coobjs: Vec<u32>,
     pub prevapos: f32,
 }
+#[derive(Default)]
 pub struct Mesh {
     pub vectors: Vec<Vector2>
 }
-pub struct DirectedMesh
-pub struct Line <'a> {
-    pub p1: &'a point2
-    pub p2: &'a Point2
+#[derive(Default)]
+pub struct DirectedMesh {
+    mesh: Vec<Vector2>
+    edges: Vec<Matrix2>
+}
+
+pub struct Line {
+    pub p1: Vector2
+    pub p2: Vector2
 }
 pub struct Island3l {
     pub objids: Vec<u32>,

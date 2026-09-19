@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 pub fn GenHanConstructor<T: Clone>(thing: T) -> impl FnMut(u32) -> Box<dyn FnMut(Option<T>) -> T> {
-    let state = Rc::new(RefCell::new(thing));
+    let state = Rc::new(RefCell::new(thing));,
     let mut counter: u32 = 0;
 
     move |input: u32| {
