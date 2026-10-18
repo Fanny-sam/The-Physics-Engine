@@ -13,4 +13,3 @@ impl Object2l {
         
     }
 }
-pub fn 

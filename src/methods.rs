@@ -1,4 +1,3 @@
-⅞8use spade::Point2;
 use crate::constants::*;
 use rayon::prelude::*;
 fn has_hardware_vulkan_compute() -> bool {
@@ -20,88 +19,42 @@ fn has_hardware_vulkan_compute() -> bool {
     }
     false
 }
-    #[inline(always)]
-    pub fn integrate_linear(&mut self, dt: f32) {
-        self.obj.vel.x += (self.obj.grav.x + self.obj.acc.x) * dt;
-        self.obj.vel.y += (self.obj.grav.y + self.obj.acc.y) * dt;
-
-        self.obj.pos.x += self.obj.vel.x * dt;
-        self.obj.pos.y += self.obj.vel.y * dt;
+#[inline(always)]
+pub fn integrate_linear(&mut self, dt: f32) {
+    self.obj.vel.x += (self.obj.grav.x + self.obj.acc.x) * dt;
+    self.obj.vel.y += (self.obj.grav.y + self.obj.acc.y) * dt;
+    self.obj.pos.x += self.obj.vel.x * dt;
+    self.obj.pos.y += self.obj.vel.y * dt;
     }
 
-    #[inline(always)]
-    pub fn integrate_angular(&mut self, dt: f32) {
-        self.obj.avel += self.obj.aacc * dt;
-        self.obj.apos += self.obj.avel * dt;
-    }
-    #[inline(always)]
-    pub fn calculate_collision_mesh(&mut self) {
-        // calculate collision mesh rotation
-        if self.obj.apos != self.prevapos {
-            let (sin, cos) = (self.obj.apos).sin_cos();
-            let rot = Matrix2 {
-                col1: Vector2 { x: cos,  y: sin },
-                col2: Vector2 { x: -sin, y: cos },
-                };
-            for (original, transformed) in self.nonwarp_collision.iter()
-                .zip(self.collision.iter_mut())
-            {
-                *transformed = rot * *original;
-                
-            };
-        };
-        self.prevapos = self.obj.apos;
-    }
-    pub fn correction(&mut self, c: CorrectionData) {
-        match c.index {
-            Pos => {
-                self.obj.pos = Vector2 {
-                    x: c.x,
-                    y: c.y,
-                };
-            }
-
-            Vel => {
-                self.obj.vel = Vector2 {
-                    x: c.x,
-                    y: c.y,
-                };
-            }
-
-            Acc => {
-                self.obj.acc = Vector2 {
-                    x: c.x,
-                    y: c.y,
-                };
-            }
-
-            Apos => {
-                self.obj.apos = c.value;
-            }
-
-            Avel => {
-                self.obj.avel = c.value;
-            }
-
-            Aacc => {
-                self.obj.aacc = c.value;
-            }
-
-            Grav => {
-                self.obj.grav = Vector2 {
-                    x: c.x,
-                    y: c.y,
-                };
-            }
-
-            Layer => {
-                self.layer = c.uvalue;
-            }
-
-            Prevapos => {
-                self.prevapos = c.value;
-            }
-        }
+#[inline(always)]
+pub fn integrate_angular(&mut self, dt: f32) {
+    self.obj.avel += self.obj.aacc * dt;
+    self.obj.apos += self.obj.avel * dt;
+}
+#[inline(always)]
+pub fn calculate_collision_mesh(&mut self) {
+    // calculate collision mesh rotation
+    if self.obj.apos != self.prevapos {
+        let (sin, cos) = (self.obj.apos).sin_cos();
+        let rot = Matrix2 {col1: Vector2 { x: cos,  y: sin },col2: Vector2 { x: -sin, y: cos },};
+        for (&original, transformed) in self.nonwarp_collision.iter()
+            .zip(self.collision.iter_mut()) 
+        {*transformed = rot * original;};
+    };
+    self.prevapos = self.obj.apos;
+}
+pub fn correction(&mut self, c: CorrectionData) {
+    match c.index {
+        Pos => {self.obj.pos = Vector2 {x: c.x,y: c.y,};}
+        Vel => {self.obj.vel = Vector2 {x: c.x,y: c.y,};}
+        Acc => {self.obj.acc = Vector2 {x: c.x,y: c.y,};}
+        Apos => {self.obj.apos = c.value;}
+        Avel => {self.obj.avel = c.value;}
+        Aacc => {self.obj.aacc = c.value;}
+        Grav => {self.obj.grav = Vector2 {x: c.x,y: c.y,};}
+        Layer => {self.layer = c.uvalue;}
+        Prevapos => {self.prevapos = c.value;}
     }
 }
 /*---------------------------------------
@@ -115,9 +68,16 @@ pub fn sort_by_keys<T>(objects: Vec<T>, keys: Vec<f32>) -> Vec<T> {
     pairs.into_iter().map(|(_, obj)| obj).collect()
 }
 pub fn get_angle(vector: Vector2) -> f32 {
-    vector.x.atan2(vector.y).to_degrees()
+    vector.y.atan2(vector.x)//.to_degrees()
 }
-pub fn sort_mesh(mesh: Mesh, centroid: Vector2) {
+#[inline(always)]
+fn polar_cmp(a: Vector2, b: Vector2) -> bool {
+    let ha = a.y < 0.0 || (a.y == 0.0 && a.x < 0.0);
+    let hb = b.y < 0.0 || (b.y == 0.0 && b.x < 0.0);
+    let cross = a.x * b.y - a.y * b.x;
+    if ha ^ hb { ha } else { cross < 0.0 }
+}
+pub fn sort_mesh(mesh: Mesh, centroid: Vector2) -> Mesh {
     let mut keys = Vec![]
     for vector in mesh.vectors.iter() {
         keys.push(get_angle(vector - centroid));
@@ -133,10 +93,6 @@ pub fn dot(a: Vector2, b: Vector2) -> f32 {
 pub fn squareddistance(vector: Vector2) -> f32 {
     vector.x*vector.x+vector.y*vector.y
 }
-pub fn pythag
-impl Vector2 {
-    pub fn 
-}
 impl std::ops::Add<Vector2> for Vector2 {
     type Output = Vector2
     
@@ -145,6 +101,11 @@ impl std::ops::Add<Vector2> for Vector2 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
         }
+    }
+}
+impl AddAssign for Vector2 {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
     }
 }
 impl std::ops::Sub<Vector2> for Vector2 {
@@ -217,112 +178,37 @@ impl Island3l {
         self.objids.push(Object2l.id)
     }
 }
+
 /*---------------------------------------
        Second Layer Functions
 ---------------------------------------*/
-pub trait Traitcode000 {
-    fn sum_optim(&self) -> Vector2;
-}
-impl Traitcode000 for [Vector2] {
-    fn sum_optim(&self) -> Vector2 {
-        if self.len() <= 4 {
-            match self.len() {
-                0 => Vector2 {x: 0.0, y: 0.0},
-                1 => self[0],
-                2 => self[0]+self[1],
-                3 => (self[0]+self[1])+self[2],
-                4 => (self[0]+self[1])+(self[2]+self[3]),
-                _ => unreachable!(),
-            }
-        } else {
-            let (half1, half2) = self.split_at(self.len()/2);
-            let (quar1, quar2) = half1.split_at(half1.len()/2);
-            let (quar3, quar4) = half2.split_at(half2.len()/2);
-            let part1 = quar1.sum_optim();
-            let part2 = quar2.sum_optim();
-            let part3 = quar3.sum_optim();
-            let part4 = quar4.sum_optim();
-            let fin1 = part1 + part2;
-            let fin2 = part3 + part4;
-            fin1 + fin2
-        }
+pub fn sum(v: &[Vector2]) -> Vector2 {
+    let mut acc = [Vector2::default(); 4];
+    let mut chunks = v.chunks_exact(4);
+    for c in &mut chunks {
+        acc[0] +=c[0];
+        acc[1] +=c[1];
+        acc[2] +=c[2];
+        acc[3] +=c[3];
     }
-}
-
-impl Traitcode000 for Mesh {
-    fn sum_optim(&self) -> Vector2 {
-        if self.vectors.len() <= 4 {
-            match self.vectors.len() {
-                0 => Vector2 {x: 0.0, y: 0.0},
-                1 => self[0],
-                2 => self[0]+self[1],
-                3 => self[0]+self[1]+self[2],
-                4 => (self[0]+self[1])+(self[2]+self[3]),
-                _ => unreachable!(),
-            }
-        } else {
-            let (half1, half2) = self.vectors.split_at(self.vectors.len()/2);
-            let (quar1, quar2) = half1.split_at(half1.len()/2);
-            let (quar3, quar4) = half2.split_at(half2.len()/2);
-            let part1 = quar1.sum_optim();
-            let part2 = quar2.sum_optim();
-            let part3 = quar3.sum_optim();
-            let part4 = quar4.sum_optim();
-            let fin1 = part1 + part2;
-            let fin2 = part3 + part4;
-            fin1 + fin2
-        }
-    }
-    pub fn sum(&self) -> Vector2 {
-        let output: Vector2 = 0.0;
-        for value in self.vectors {
-            output = output + value;
-        }
-        output
-    }
+    let mut s = (acc[0] + acc[1]) + (acc[2] + acc[3]);
+    for x in chunks.remainder() { s += *x; }
+    s
 }
 impl Mesh {
-    pub fn farp(&self, cen: Vector2) -> Vector2 {
-        let mut output = Vector2::default();
-        let mut distprev: f32 = -1.00;
-        let mut dist: f32 = 0.0;
-        for vertex in &self.vertex {
-            dist = squareddistance(vertex-cen);
-            if dist > distprev {
-                distprev = dist;
-                output = vertex;
-            }
+    pub fn farvec(&self, centroid: Vector2) -> Vector2 {
+        let mut vectoroid = Vector2::default();
+        let mut verminoid = f32::default();
+        let mut vermin = f32::default();
+        for &vector in self.vectors.iter() {
+            vermin = squarredistance(vector-centroid);
+            (vectoroid, verminoid) = if vermin > verminoid {(vector, vermin)} else {(vectoroid, verminoid)}
         }
-        output
+        vectoroid
     }
-    
 }
-fn Spiraler(mesh: &Mesh) -> Mesh {
-    // how do i spiral a graph?
-    // hmm, maybe calculate the centroid first
-    let centroid = mesh.sum_optim()/mesh.len();
-    //now what algorythm do i add1
-    //oh, one more thing, clone Mesh. and make a surrogate mesh
-    let mut finishermesh = Mesh::default();
-    //1: calculate the farthest point from centroid and sort the mesh so that it is clockwise sorted
-    let mut nowpoint = mesh.farp(centroid);
-    mesh_sorted = sort(mesh, centroid)
-    finishermesh.vectors.push(nowpoint);
-    //2: calculate the angles from every point to this point, then choose the one closest to the top pointing vector while in the front 180°
-    nowpoint = mclone.ClosestP(centroid, nowpoint)
-    //3: push it, and pop mclone
-    finishermesh.vectors.push(nowpoint);
-    mclone.vectors.pop();
-    //3: do this over and over in a while loop
-    while mclone.vectors.len() != 0 {
-        nowpoint = mclone.last180(centroid, nowpoint).chooseclosestpoint(centroid, nowpoint);
-        finishermesh.vectors.push(nowpoint);
-        mclone.vectors.pop();
-    };
-    //4: output the result
-    //output the output that outputs a output that outputs 2 outputs
+fn Mesh_Ringer(mesh: Mesh) {
     
-    finishermesh
 }
 fn Triangulator(object: Object2l) -> TriangleMesh {
     
