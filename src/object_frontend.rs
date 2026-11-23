@@ -3,13 +3,7 @@ use crate::methods::*;
 
 
 impl Object2l {
-    pub fn update(&mut self, dt: f32) {
-        self.integrate_linear(dt); //first function
-        self.integrate_angular(dt); //second function
-        self.calculate_collision_mesh(); //third function
-        self.run()
-        
-        
-        
+    pub fn update(&mut self, _dt: f32) {
+        todo!()
     }
 }

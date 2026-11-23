@@ -1,15 +1,17 @@
-
+use crate::methods::*;
 #[repr(u32)]
-pub enum CorrectionKey {
-    Pos = 0,
-    Vel = 1,
-    Acc = 2,
-    Apos = 3,
-    Avel = 4,
-    Aacc = 5,
-    Grav = 6,
-    Layer = 7,
-    Prevapos = 8,
+pub enum CorrectionKey32 {
+    Apos (f32),
+    Avel (f32),
+    Aacc (f32),
+    Layer (u32),
+}
+#[repr(u32)]
+pub enum CorrectionKeyVectors {
+    Pos (Vector2),
+    Vel (Vector2),
+    Acc (Vector2),
+    Grav (Vector2),
 }
 
 #[macro_export]
@@ -56,7 +58,7 @@ pub struct Vector2 {
 }
 #[derive(Copy, Clone, Debug)]
 pub struct Vertex {
-    pub pos: Point2<f32>,
+    pub pos: Vector2,
     pub id: u32,
 }
 #[repr(C)]
@@ -68,10 +70,10 @@ pub struct Matrix2 {
 }
 #[repr(C)]
 pub struct MatrixMatrix2 {
-    pub m1: Matrix2
-    pub m2: Matrix2
-    pub m3: Matrix2
-    pub m4: Matrix2
+    pub m1: Matrix2,
+    pub m2: Matrix2,
+    pub m3: Matrix2,
+    pub m4: Matrix2,
 }
 pub struct DVect {
     pub radians: f32,
@@ -99,36 +101,73 @@ pub struct Object2l {
 }
 #[derive(Default)]
 pub struct Mesh {
-    pub vectors: Vec<Vector2>
+    pub vectors: Vec<Vector2>,
 }
 #[derive(Default)]
 pub struct DirectedMesh {
-    mesh: Vec<Vector2>
-    edges: Vec<Matrix2>
+    mesh: Vec<Vector2>,
+    edges: Vec<Matrix2>,
 }
-
-pub struct Line {
-    pub p1: Vector2
-    pub p2: Vector2
-}
-pub struct Island3l {
+pub struct WorldObj {
     pub objids: Vec<u32>,
-    pub islid: u32
-}
-pub struct Archi4l {
-    pub islids: &mut <Island3l>,
-}
-#[repr(C)]
-pub struct PhisiksObject {
-    pub miku: *mut Objectl2,
 }
 pub struct Triangle {
-    pub p1: Point2
-    pub p2: Point2
-    pub p3: Point2
+    pub vertex1: Vector2,
+    pub vertex2: Vector2,
+    pub vertex3: Vector2,
+}
+pub struct WeirdTriangle {
+    pub rotation: u32,
+    pub centroid: Vector2,
+    pub side1: f32,
+    pub side2: f32,
+    pub side3: f32,
+}
+pub struct DecompressedTriangle {
+    pub rotation: u32,
+    pub centroid: Vector2,
+    pub incenter: Vector2,
+    pub circumcenter: Vector2,
+    pub orthocenter: Vector2,
+    pub ninepointcenter: Vector2,
+    pub circumcircle: f32,
+    pub incircle: f32,
+    pub medialcircle: f32,
+    pub side1: Vector2,
+    pub side2: Vector2,
+    pub side3: Vector2,
+    pub angle1: f32,
+    pub angle2: f32,
+    pub angle3: f32,
+}
+pub struct PartlyDecompressedTriangle {
+    pub rotation: u32,
+    pub centroid: Vector2,
+    pub side1: Vector2,
+    pub side2: Vector2,
+    pub side3: Vector2,
+    pub angle1: f32,
+    pub angle2: f32,
+    pub angle3: f32,
+}
+
+pub struct WeirdRightTriangle {
+    pub rotation: u16,
+    pub centroid: Vector2,
+    pub side1: f32,
+    pub side2: f32,
 }
 pub struct TriangleMesh {
-    pub triangles: Vec<Triangle>
+    pub triangles: Vec<Triangle>,
+}
+pub struct Line {
+    pub a: Vector2,
+    pub b: Vector2,
+}
+impl Line {
+    fn dol(&mut self, extend: f32) -> Vector2 {
+        extend*self.b - (extend-1.0)*self.a
+    }
 }
 pub struct Batchtype1 {
     pub data: [u32; 4092]
